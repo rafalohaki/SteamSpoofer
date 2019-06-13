@@ -16,15 +16,22 @@ public:
 	void UnSpoofSteamDll();
 
 	bool IsSteamDllExists();
+	bool IsPathExist();
+	bool IsSpoofed();
 
-	bool IsPathExists;
-	bool IsSpoofed;
-
-	string sSteamPath;
-	string sSteamDll;
-	string sNewSteamDll;
+	string GetSteamPath();
+	string GetSteamDllName();
+	string GetNewSteamDllName();
+	
 private:
+	bool m_isPathExists;
+	bool m_isSpoofed;
+	string m_sSteamPath;
+	string m_sSteamDll;
+	string m_sNewSteamDll;
+
+protected:
 	void GetSteamDll();
-	string GetSteamPath2();
 	bool CheckSpoof();
+	string GetSteamPath2();
 };

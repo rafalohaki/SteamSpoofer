@@ -2,12 +2,12 @@
 
 cSteamSpoof::cSteamSpoof()
 {
-	IsPathExists = false;
-	IsSpoofed = false;
+	m_isPathExists = false;
+	m_isSpoofed = false;
 
-	sSteamPath = "";
-	sSteamDll = "";
-	sNewSteamDll = "";
+	m_sSteamPath = "";
+	m_sSteamDll = "";
+	m_sNewSteamDll = "";
 
 	Initialize();
 }
@@ -15,7 +15,7 @@ cSteamSpoof::cSteamSpoof()
 void cSteamSpoof::Initialize()
 {
 	GetSteamDll();
-	IsSpoofed = CheckSpoof();
+	m_isSpoofed = CheckSpoof();
 }
 
 void cSteamSpoof::GetSteamDll()
@@ -31,23 +31,14 @@ void cSteamSpoof::GetSteamDll()
 		sProcPath = GetSteamPath2();
 
 	if (sProcPath.size() > 1)
-		IsPathExists = true;
+		m_isPathExists = true;
 	else
 		return;
 
-	sSteamPath = sProcPath;
+	m_sSteamPath = sProcPath;
 
-	sSteamDll = sProcPath + "crashhandler.dll";
-	sNewSteamDll = sProcPath + "crashhandler1.dll";
-}
-
-string cSteamSpoof::GetSteamPath2()
-{
-	char value[256];
-	DWORD BufferSize = 256;
-	RegGetValueA(HKEY_CURRENT_USER, "SOFTWARE\\Valve\\Steam", "SteamPath", RRF_RT_ANY, NULL, (PVOID)&value, &BufferSize);
-	sSteamPath = (string)value + "\\";
-	return (string)value + "\\";
+	m_sSteamDll = sProcPath + "crashhandler.dll";
+	m_sNewSteamDll = sProcPath + "crashhandler1.dll";
 }
 
 void cSteamSpoof::MainSteamDllSpoof()
@@ -57,21 +48,21 @@ void cSteamSpoof::MainSteamDllSpoof()
 
 void cSteamSpoof::SpoofSteamDll()
 {
-	rename(sSteamDll.c_str(), sNewSteamDll.c_str());
+	rename(m_sSteamDll.c_str(), m_sNewSteamDll.c_str());
 
-	IsSpoofed = CheckSpoof();
+	m_isSpoofed = CheckSpoof();
 }
 
 void cSteamSpoof::UnSpoofSteamDll()
 {
-	rename(sNewSteamDll.c_str(), sSteamDll.c_str());
+	rename(m_sNewSteamDll.c_str(), m_sSteamDll.c_str());
 
-	IsSpoofed = CheckSpoof();
+	m_isSpoofed = CheckSpoof();
 }
 
 bool cSteamSpoof::IsSteamDllExists()
 {
-	wstring wsTemp = wstring(sSteamDll.begin(), sSteamDll.end());
+	wstring wsTemp = wstring(m_sSteamDll.begin(), m_sSteamDll.end());
 	LPCWSTR lwsSteamDll = wsTemp.c_str();
 
 	if (PathFileExistsW(lwsSteamDll))
@@ -82,7 +73,7 @@ bool cSteamSpoof::IsSteamDllExists()
 
 bool cSteamSpoof::CheckSpoof()
 {
-	wstring wsTemp = wstring(sNewSteamDll.begin(), sNewSteamDll.end());
+	wstring wsTemp = wstring(m_sNewSteamDll.begin(), m_sNewSteamDll.end());
 	LPCWSTR lwsSteamDll = wsTemp.c_str();
 
 	if (PathFileExistsW(lwsSteamDll))
@@ -90,3 +81,37 @@ bool cSteamSpoof::CheckSpoof()
 
 	return false;
 }
+
+bool cSteamSpoof::IsPathExist()
+{
+	return m_isPathExists;
+};
+
+bool cSteamSpoof::IsSpoofed()
+{
+	return m_isSpoofed;
+};
+
+string cSteamSpoof::GetSteamPath2()
+{
+	char value[256];
+	DWORD BufferSize = 256;
+	RegGetValueA(HKEY_CURRENT_USER, "SOFTWARE\\Valve\\Steam", "SteamPath", RRF_RT_ANY, NULL, (PVOID)&value, &BufferSize);
+	m_sSteamPath = (string)value + "\\";
+	return (string)value + "\\";
+}
+
+string cSteamSpoof::GetSteamPath()
+{
+	return m_sSteamPath;
+};
+
+string cSteamSpoof::GetSteamDllName()
+{
+	return m_sSteamDll;
+};
+
+string cSteamSpoof::GetNewSteamDllName()
+{
+	return m_sNewSteamDll;
+};

@@ -28,7 +28,7 @@ int main()
 
 	RunCSGO();
 	ShowWindow(GetConsoleWindow(), 0);
-	WorkWhileIsCSGO(SteamSpoof.sSteamPath);
+	WorkWhileIsCSGO(SteamSpoof.GetSteamPath());
 
 	Sleep(1000);
 	exit(0);

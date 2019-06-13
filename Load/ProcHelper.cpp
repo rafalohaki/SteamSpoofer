@@ -13,7 +13,7 @@ DWORD cProcHelper::FindProcByName(LPCSTR lpProcName)
 
 	bool bRet = Process32First(hSnap, &PE32);
 
-	for (int i = 0; i < PE32.dwSize; i++)
+	for (unsigned int i = 0; i < PE32.dwSize; i++)
 	{
 
 		if (!strcmp(lpProcName, PE32.szExeFile)) {
