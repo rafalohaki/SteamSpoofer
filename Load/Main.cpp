@@ -16,11 +16,12 @@ int main()
 	SetConsoleSettings();
 	StarterText();
 
-	FindSteamExe();
-	CloseCSGO();
-
 	cSteamSpoof SteamSpoof;
 	SpoofStart(SteamSpoof);
+
+	FindSteamExe(SteamSpoof.GetSteamPath());
+	CloseCSGO();
+
 	DoSpoof(SteamSpoof);
 
 	FindDll(sMainPath);
@@ -28,7 +29,7 @@ int main()
 
 	RunCSGO();
 	ShowWindow(GetConsoleWindow(), 0);
-	WorkWhileIsCSGO(SteamSpoof.sSteamPath);
+	WorkWhileIsCSGO(SteamSpoof.GetSteamPath());
 
 	Sleep(1000);
 	exit(0);

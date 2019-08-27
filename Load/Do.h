@@ -30,17 +30,33 @@ void StarterText()
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), CMD_Green);
 }
 
-void FindSteamExe()
+void FindSteamExe(string sSteamPath)
 {
 	printf_s("%s\n", SEARCH_STEAM.c_str());
 	if (!ProcHelper.FindProcByName("Steam.exe"))
 	{
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), CMD_Red);
-		printf_s("%s\n", STEAM_CLOSED.c_str());
-		Sleep(5000);
-		exit(1);
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), CMD_Yellow);
+		printf_s("%s\n", STEAM_TRYING_START.c_str());
+		ShellExecute(NULL, "open", (sSteamPath + "steam.exe").c_str(), NULL, NULL, SW_SHOWDEFAULT);
+
+		if (!ProcHelper.FindProcByName("Steam.exe"))
+		{
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), CMD_Red);
+			printf_s("%s\n", STEAM_CANT_START.c_str());
+
+			Sleep(5000);
+			exit(1);
+		}
+
+		while (!ProcHelper.FindProcByName("steamwebhelper.exe"))
+			Sleep(1000);
+		
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), CMD_Yellow);
+		printf_s("Steam успешно запущен!\n\n");
+		Sleep(1000);
 	}
-	printf_s("%s\n\n", STEAM_FOUNDED.c_str());
+	else 
+		printf_s("%s\n\n", STEAM_FOUNDED.c_str());
 }
 
 void CloseCSGO()
@@ -72,28 +88,28 @@ void CloseCSGO()
 
 void SpoofStart(cSteamSpoof SteamSpoof)
 {
-	if (!SteamSpoof.IsPathExists)
+	if (!SteamSpoof.IsPathExist())
 	{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), CMD_Red);
 		printf_s("%s\n", STEAM_PATH_NOT_FOUNDED.c_str());
-		printf_s("%s", SteamSpoof.sSteamPath.c_str());
+		printf_s("%s", SteamSpoof.GetSteamPath().c_str());
 		Sleep(5000);
 		exit(3);
 	}
 
 	// Del old crashhandler1
-	if (SteamSpoof.IsSpoofed)
+	if (SteamSpoof.IsSpoofed())
 	{
-		DeleteFileA((SteamSpoof.sSteamPath + "crashhandler.dll").c_str());
+		DeleteFileA((SteamSpoof.GetSteamPath() + "crashhandler.dll").c_str());
 		SteamSpoof.UnSpoofSteamDll();
-		DeleteFileA((SteamSpoof.sSteamPath + "crashhandler1.dll").c_str());
+		DeleteFileA((SteamSpoof.GetSteamPath() + "crashhandler1.dll").c_str());
 	}
 }
 
 void DoSpoof(cSteamSpoof SteamSpoof)
 {
 	SteamSpoof.MainSteamDllSpoof();
-	if (!SteamSpoof.IsSpoofed)
+	if (!SteamSpoof.IsSpoofed())
 	{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), CMD_Red);
 		printf_s("%s", INJECT_ERROR.c_str());
@@ -118,7 +134,7 @@ void FindDll(string sPath)
 
 void DllToSteamDir(cSteamSpoof SteamSpoof, string sPath)
 {
-	if (!CopyFileA((sPath + DllName).c_str(), (SteamSpoof.sSteamPath + "crashhandler.dll").c_str(), 0))
+	if (!CopyFileA((sPath + DllName).c_str(), (SteamSpoof.GetSteamPath() + "crashhandler.dll").c_str(), 0))
 	{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), CMD_Red);
 		printf_s("%s", CANT_INJECT.c_str());
@@ -158,8 +174,10 @@ void WorkWhileIsCSGO(string sSteamPath)
 	while (true)
 	{
 		if (!ProcHelper.FindProcByName("csgo.exe"))
+		{
+			Beep(0, 5);
 			break;
-
+		}
 		Sleep(1000);
 	}
 
