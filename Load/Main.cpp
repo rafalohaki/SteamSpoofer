@@ -32,5 +32,5 @@ int main()
 	WorkWhileIsCSGO(SteamSpoof.GetSteamPath());
 
 	Sleep(1000);
-	exit(0);
+	return 0;
 }
