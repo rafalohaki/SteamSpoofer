@@ -52,7 +52,7 @@ void FindSteamExe(string sSteamPath)
 			Sleep(1000);
 		
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), CMD_Yellow);
-		printf_s("Steam успешно запущен!\n\n");
+		printf_s("Steam ГіГ±ГЇГҐГёГ­Г® Г§Г ГЇГіГ№ГҐГ­!\n\n");
 		Sleep(1000);
 	}
 	else 
@@ -170,18 +170,19 @@ void RunCSGO()
 
 void WorkWhileIsCSGO(string sSteamPath)
 {
-
 	while (true)
 	{
 		if (!ProcHelper.FindProcByName("csgo.exe"))
-		{
-			Beep(0, 5);
 			break;
-		}
+
 		Sleep(1000);
 	}
 
-	DeleteFileA((sSteamPath + "crashhandler.dll").c_str());
+	while (!DeleteFileA((sSteamPath + "crashhandler.dll").c_str()))
+		Sleep(100);
+
 	rename((sSteamPath + "crashhandler1.dll").c_str(), (sSteamPath + "crashhandler.dll").c_str());
+
+
 	exit(-1);
 }
